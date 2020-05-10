@@ -1,0 +1,41 @@
+
+
+<h1>Follow  Users</h1>
+
+
+<table>
+	<thead>
+		<tr>
+			<th>image</th>
+			<th>name</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<% @users.each do |following| %>
+
+		<tr>
+			<td><%= attachment_image_tag(@user, :profile_image, :fill, 50, 50, fallback: "no-image-mini.jpg") %></td>
+
+
+			<td><%= following.name %></td>
+			<td>フォロー<%= @user.followings.count %></td>
+			<td>フォロワー<%= @user.followers.count %></td>
+			<td><% unless current_user == @user %>
+			  <% if current_user.following?(user) %>
+			    <%= link_to  user_relationship_path(user, current_user.relationships.find_by(follow_id: user.id)), method: :delete do %>
+			      <%= hidden_field_tag :follow_id, user.id %>
+			      <p> フォロー外す </p>
+			    <% end %>
+			  <% else %>
+			    <%= form_for(current_user.relationships.build, url: user_relationships_path(user), method: :post) do |f| %>
+			      <%= hidden_field_tag :follow_id, user.id %>
+			      <%= f.submit 'フォローする', class: 'btn btn-primary btn-block' %>
+			    <% end %>
+			  <% end %>
+			<% end %></td>
+			<td><%= link_to "Show", @user, class: "@user_#{@user.id}" %></td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
